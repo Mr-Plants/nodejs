@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1 id="一级标题"><span>一级标题</span><a onclick="window.location.hash = '一级标题'" class="anchor">#</a></h1><h2 id="二级标题"><span>二级标题</span><a onclick="window.location.hash = '二级标题'" class="anchor">#</a></h2><h3 id="三级标题"><span>三级标题</span><a onclick="window.location.hash = '三级标题'" class="anchor">#</a></h3><h4 id="四级标题"><span>四级标题</span><a onclick="window.location.hash = '四级标题'" class="anchor">#</a></h4><h5 id="五级标题"><span>五级标题</span><a onclick="window.location.hash = '五级标题'" class="anchor">#</a></h5><h6 id="六级标题（最小）"><span>六级标题（最小）</span><a onclick="window.location.hash = '六级标题（最小）'" class="anchor">#</a></h6><ul>
+  <li>无序列表1</li>
+  <li>二级列表1 <ul>
+    <li>二级列表</li>
+  </ul>
+  </li>
+  <li>无序列表2</li>
+</ul>
+<ol>
+  <li>有序列表1</li>
+  <li>有序列表2</li>
+  <li>有序列表3</li>
+</ol>
+<p><code>底色</code><br><strong>加粗</strong><br><em>斜体</em><br>两个空格<br>换行<br><del>删除线</del></p>
+<blockquote>
+  <p>这是一段引用文字（离离原上草）  </p>
+</blockquote>
+<p><img src="http://b.hiphotos.baidu.com/zhidao/pic/item/500fd9f9d72a6059dcc8813c2a34349b033bba38.jpg" alt="头像">  </p>
+<p><a href="www.baidu.com">点击此链接访问百度</a>  </p>
+<p>底线在此!</p>
+<hr>
+<hr>
+<p>放代码！</p>
+<pre><code> import { Component } from <span class="token string">'@angular/core'</span><span class="token comment" spellcheck="true">;</span>
+
+ @<span class="token function">Component</span><span class="token punctuation">(</span>{
+   selector<span class="token punctuation">:</span> <span class="token string">'nz-demo-button-basic'</span><span class="token punctuation">,</span>
+   template<span class="token punctuation">:</span> `
+     <span class="token operator">&lt;</span>button nz<span class="token operator">-</span>button nzType<span class="token operator">=</span><span class="token string">"primary"</span><span class="token operator">></span>Primary<span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">></span>
+     <span class="token operator">&lt;</span>button nz<span class="token operator">-</span>button nzType<span class="token operator">=</span><span class="token string">"default"</span><span class="token operator">></span><span class="token keyword">Default</span><span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">></span>
+     <span class="token operator">&lt;</span>button nz<span class="token operator">-</span>button nzType<span class="token operator">=</span><span class="token string">"dashed"</span><span class="token operator">></span>Dashed<span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">></span>
+     <span class="token operator">&lt;</span>button nz<span class="token operator">-</span>button nzType<span class="token operator">=</span><span class="token string">"danger"</span><span class="token operator">></span>Danger<span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">></span>`<span class="token punctuation">,</span>
+   styles  <span class="token punctuation">:</span> <span class="token punctuation">[</span>
+       `
+       <span class="token punctuation">[</span>nz<span class="token operator">-</span>button<span class="token punctuation">]</span> {
+         margin<span class="token operator">-</span>right<span class="token punctuation">:</span> 8px<span class="token comment" spellcheck="true">;</span>
+         margin<span class="token operator">-</span>bottom<span class="token punctuation">:</span> 12px<span class="token comment" spellcheck="true">;</span>
+       }
+     `
+   <span class="token punctuation">]</span>
+ }<span class="token punctuation">)</span>
+ export class NzDemoButtonBasicComponent {
+ }</code></pre>  <!--放一段注释冷静一下，不会被编译的哦--><table>
+  <thead>
+  <tr>
+    <th>header1</th>
+    <th>header2</th>
+    <th>第三列</th>
+  </tr>
+  </thead>
+  <tbody><tr>
+    <td>row1</td>
+    <td>row2</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>row1</td>
+    <td>row2</td>
+    <td>4</td>
+  </tr>
+  </tbody></table>
+</body>
+</html>

@@ -12,3 +12,15 @@ title:
 ## en-US
 
 There are `primary` button, `default` button, `dashed` button and `danger` button in antd.
+
+```
+    const markedTest = require('markedTest');
+    const fs = require('fs');
+    
+    fs.readFile('markTest.md', (err, file) => {
+      if(err){
+        throw new Error(err);
+      }
+      const html = markedTest.
+    });
+```
