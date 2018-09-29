@@ -1,16 +1,14 @@
 const marked = require('./utils/marked');
-const fs = require('fs');
+const fs = require('fs-extra');
 const remark = require('remark')();
 
-fs.readFile('mdtest.md', (err, file) => {
-  if (err) {
-    throw error(err);
-  }
-  let htmlContent = '';
-  const mdObject = remark.parse(file);
-  mdObject.children.forEach(mdChild => {
-    htmlContent += marked(remark.stringify(mdChild));
-  });
-  // console.log(JSON.stringify(html));
-  console.log(htmlContent);
+const mdFile = fs.readFileSync('mdtest.md');
+let htmlContent = '';
+const mdObject = remark.parse(mdFile);
+mdObject.children.forEach(mdChild => {
+  htmlContent += marked(remark.stringify(mdChild));
 });
+
+let templateHtml = String(fs.readFileSync('template.html'));
+templateHtml = templateHtml.replace(/{{content}}/g, htmlContent);
+fs.writeFileSync('index.html', templateHtml);

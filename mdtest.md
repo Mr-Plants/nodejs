@@ -26,7 +26,7 @@
 
 >这是一段引用文字（离离原上草）  
 
-![头像](http://b.hiphotos.baidu.com/zhidao/pic/item/500fd9f9d72a6059dcc8813c2a34349b033bba38.jpg)  
+![头像](http://img.xgo-img.com.cn/209_500x375/208169.jpg)  
 
 [点击此链接访问百度](www.baidu.com)  
 
