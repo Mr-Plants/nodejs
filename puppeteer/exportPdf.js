@@ -2,7 +2,7 @@ const screenshot = require('puppeteer');
 
 async function init() {
     const pupperteerConfig = {
-        executablePath: './Chromium.app/Contents/MacOS/Chromium'
+        executablePath: './node_modules/Chromium.app/Contents/MacOS/Chromium'
     };
     const browser = await screenshot.launch(pupperteerConfig);
     const page = await browser.newPage();
@@ -10,7 +10,7 @@ async function init() {
     await page.pdf({
         path: 'puppeteer/jianshu.pdf',
         format: 'A4'
-    })
+    });
     browser.close();
 }
 

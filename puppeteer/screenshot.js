@@ -2,7 +2,7 @@ const screenshot = require('puppeteer');
 
 async function init() {
     const pupperteerConfig = {
-        executablePath: './Chromium.app/Contents/MacOS/Chromium',
+        executablePath: './node_modules/Chromium.app/Contents/MacOS/Chromium',
         // headless: false
     };
     const browser = await screenshot.launch(pupperteerConfig);
