@@ -11,6 +11,7 @@ async function init() {
         path: 'puppeteer/jianshu.pdf',
         format: 'A4'
     });
+    console.log(await browser.version());
     browser.close();
 }
 
