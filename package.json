@@ -9,15 +9,9 @@
     "cheerio": "^1.0.0-rc.2",
     "crypto": "^1.0.1",
     "express": "^4.16.3",
-    "fs-extra": "^7.0.0",
-    "marked": "^0.5.1",
     "mysql": "^2.16.0",
-    "node-prismjs": "^0.1.2",
-    "prismjs": "^1.15.0",
     "puppeteer": "^1.16.0",
-    "remark": "^9.0.0",
-    "superagent": "^3.8.3",
-    "yaml-front-matter": "^4.0.0"
+    "superagent": "^3.8.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",
