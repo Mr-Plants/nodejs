@@ -36,3 +36,5 @@ const pathObj = {
 };
 // 从对象中返回路径字符串
 console.log(path.format(pathObj));
+
+console.warn(path.resolve(__dirname, '/static'));
