@@ -1,17 +1,37 @@
 const EXPRESS = require('express');
-
+const ROUTER = EXPRESS.Router();
 const APP = EXPRESS();
+const BODY_PARSER = require('body-parser')
 
-APP.get('/', (req, res) => {
-    res.send('hello world!')
+// APP.use(BODY_PARSER.json())
+APP.use(BODY_PARSER.urlencoded({entended: true}))
+
+APP.get('/:id', (req, res) => {
+    console.log(req.accepts('html'))
+    console.log(req.is('html'))
+    console.log(req.query)
+    console.log(req.params)
+    console.log(req.baseUrl)
+    console.log(req.url)
+    // res.send('hello world!')
+    res.redirect(301, 'http://baidu.com')
 })
 
 // 使用多个回调
-APP.post('/', [cb0, cb1, cb2])
+// APP.post('/', [cb0, cb1, cb2])
 
 APP.listen(8000, () => {
     console.log('listen on 8000')
 })
+
+APP.post('/', (req, res) => {
+    console.log(req.body)
+    console.log(res.get('Content-Type'))
+    // res.send('over')
+    res.json({error: 'message'})
+})
+
+APP.use('/root', ROUTER)
 
 // 使用静态文件中间件
 APP.use(EXPRESS.static('static'));
