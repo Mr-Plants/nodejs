@@ -10,7 +10,10 @@ function test() {
 
 exports.test = '2333';
 
-module.exports = {hello};
+// module.exports = {hello};
+module.exports = function (x, y) {
+    return x + y;
+}
 
 console.log(module.exports)
 console.log(exports)

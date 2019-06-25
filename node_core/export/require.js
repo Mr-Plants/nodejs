@@ -1,6 +1,6 @@
 const req = require('./export')
 
 
-req.hello();
-
+// req.hello();
+console.log(req(2, 3))
 console.log(req.test)
