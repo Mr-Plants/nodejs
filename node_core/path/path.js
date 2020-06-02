@@ -1,5 +1,5 @@
 const path = require('path');
-const url = '../foo/bar/baz/asdf/quux.js';
+const url = '1.quux.js';
 /**
  * 规范化路径
  */
@@ -7,7 +7,7 @@ console.log(path.normalize('www/src\html/..//index.html'));
 /**
  * 返回路径中的最后一部分（）一般是文件名
  */
-console.log(path.basename(url));
+console.log(path.basename(url,path.extname(url)));
 
 // 返回路径中最后一部分的文件扩展名，不是文件则返回空
 console.log(path.extname(url));

@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 async function init() {
     const puppeteerConfig = {
-        executablePath: './node_modules/Chromium.app/Contents/MacOS/Chromium'
+        executablePath: '../node_modules/Chromium.app/Contents/MacOS/Chromium'
     };
     const browser = await puppeteer.launch(puppeteerConfig);
 

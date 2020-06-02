@@ -74,7 +74,7 @@ fs.mkdir(__dirname + '/test_dir', err => {
 /**
  * 读取文件夹
  */
-fs.readdir('node_core', (err, files) => {
+fs.readdir('node_core/fs', (err, files) => {
     if (err) {
         return console.error(err);
     }

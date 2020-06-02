@@ -6,8 +6,7 @@ http.createServer((req, res) => {
 
     const PARAMS = URL.parse(req.url, true).query;
 
-    res.write('接收到参数\n');
-    res.end('hello world!');
-}).listen(8000);
+    res.end(JSON.stringify({'data': '', 'error': ''}));
+}).listen(3000);
 
 
