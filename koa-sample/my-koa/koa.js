@@ -6,25 +6,33 @@ const context = require('./context')
 
 class Koa {
   constructor() {
-    this.createContext('', '')
+    this.middlewares = [];
   }
 
-  use(callback) {
-
-    this.callback = callback;
+  use(middleware) {
+    this.middlewares.push(middleware)
   }
 
   listen(...args) {
-    const h = http.createServer(this.callback)
-    h.listen(...args)
+    const server = http.createServer((req, res) => {
+      const ctx = this.createContext(req, res)
+      const fn = this.compose(this.middlewares)
+      res.end(ctx.body)
+    })
+    server.listen(...args)
   }
 
   createContext(req, res) {
     const ctx = Object.create(context)
     ctx.request = Object.create(request)
     ctx.response = Object.create(response)
-
+    ctx.req = req;
+    ctx.res = res;
     console.log(ctx)
+  }
+
+  compose(middlewares) {
+
   }
 }
 
