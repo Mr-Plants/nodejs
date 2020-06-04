@@ -9,6 +9,10 @@ class Koa {
     this.middlewares = [];
   }
 
+  /**
+   * 使用中间件（支持异步中间件）
+   * @param middleware
+   */
   use(middleware) {
     this.middlewares.push(middleware)
   }
@@ -31,6 +35,10 @@ class Koa {
     console.log(ctx)
   }
 
+  /**
+   * 复合函数
+   * @param middlewares 中间件
+   */
   compose(middlewares) {
 
   }
