@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  (async () => {
+    // todo 如果使用了反向代理，此处不能写绝对地址
+    // axios.defaults.baseURL = 'http://localhost:3000';
+    // axios默认不携带同源cookie
+    axios.defaults.withCredentials = true
+    const res = await axios.get("/users", {
+      /**
+       * 加入了自定义headers，成为了非简单请求，会触发cors
+       */
+      headers: {
+        'User-Token': 'xxx'
+      }
+    })
+    console.log('data', res.data)
+    document.writeln(`Response : ${JSON.stringify(res.data)}`)
+  })()
+</script>
+</body>
+</html>
