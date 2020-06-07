@@ -36,6 +36,6 @@ async function animateString(string) {
 
 (async () => {
 	console.log();
-	await animateString('We hope you enjoy Chalk! <3');
+	await animateString('We hope you enjoy Chalk!');
 	console.log();
 })();
