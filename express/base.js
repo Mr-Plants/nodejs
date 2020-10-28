@@ -6,7 +6,7 @@ const BODY_PARSER = require('body-parser')
 // APP.use(BODY_PARSER.json())
 APP.use(BODY_PARSER.urlencoded({entended: true}))
 
-APP.get('/:id', (req, res) => {
+APP.get('/detail', (req, res) => {
     console.log(req.accepts('html'))
     console.log(req.is('html'))
     console.log(req.query)
@@ -14,7 +14,7 @@ APP.get('/:id', (req, res) => {
     console.log(req.baseUrl)
     console.log(req.url)
     // res.send('hello world!')
-    res.redirect(301, 'http://baidu.com')
+    res.redirect(302, 'http://baidu.com')
 })
 
 // 使用多个回调

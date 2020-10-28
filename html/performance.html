@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<ul id="mian_div">
+  <li id="time_li">time</li>
+  <li>geekbang</li>
+</ul>
+<p id="demo">强制布局demo</p>
+<button onclick="foo()">添加新元素</button>
+<script>
+  function foo() {
+    let main_div = document.getElementById("mian_div")
+    let new_node = document.createElement("li")
+    let textnode = document.createTextNode("time.geekbang")
+    new_node.appendChild(textnode);
+    main_div.appendChild(new_node);
+    // console.log(main_div.offsetHeight)
+  }
+</script>
+</body>
+</html>
