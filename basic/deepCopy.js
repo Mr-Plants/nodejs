@@ -6,7 +6,7 @@ function isObject(data) {
   return typeof data === 'object' && data !== null
 }
 
-function deepCopy(data) {
+function deepCopy(data, hash = {}) {
   // 简单数据类型，直接返回结果
   if (!isObject(data)) {
     return data;
@@ -38,9 +38,11 @@ const test = {
   a1: undefined,
   a2: null,
   a3: 123,
+  a4: '',
   book: {title: "You Don't Know JS", price: "45"},
   arr: [{name: 'foo', birth: new Date(1992, 0, 3)}]
 }
+test.a4 = test;
 const copy = deepCopy(test)
 console.log(copy)
 test.arr[0].birth.setFullYear(2013)
