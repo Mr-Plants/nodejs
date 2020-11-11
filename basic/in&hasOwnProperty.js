@@ -21,9 +21,9 @@ const bruce = {
   self_prop: 'bruce',
 }
 Object.setPrototypeOf(bruce, {'extend_prop': 233})
-let key = Symbol('self_symbol')
+let self_symbol = Symbol('self_symbol')
 // 加入symbol属性
-bruce[key] = "secret";
+bruce[self_symbol] = "secret";
 // 不可枚举属性
 Object.defineProperty(bruce, 'self_non_enumerable', {
   enumerable: false,
@@ -31,13 +31,13 @@ Object.defineProperty(bruce, 'self_non_enumerable', {
 })
 
 console.log('self_prop' in bruce)   // true
-console.log(key in bruce)  // false
+console.log(self_symbol in bruce)  // false
 console.log('self_non_enumerable' in bruce)   // true
 console.log('extend_prop' in bruce)  // true
 
 console.log('------------------------------')
 
 console.log(bruce.hasOwnProperty('self_prop'))   // true
-console.log(bruce.hasOwnProperty(Symbol('self_symbol')))  // false
+console.log(bruce.hasOwnProperty(self_symbol))  // false
 console.log(bruce.hasOwnProperty('self_non_enumerable'))  // true
 console.log(bruce.hasOwnProperty('extend_prop'))   // false
