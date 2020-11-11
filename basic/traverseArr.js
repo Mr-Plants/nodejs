@@ -25,7 +25,6 @@ for (let i = 0; i < arr.length; i++) {
   console.log(i, arr[i])
 }
 
-
 // 跳过非数字属性
 // foo
 // bar
@@ -34,6 +33,3 @@ for (let i = 0; i < arr.length; i++) {
 for (let v of arr) {
   console.log(v)
 }
-
-console.log(Object.prototype.hasOwnProperty.call(arr,'describe'))  // true
-console.log(Object.prototype.hasOwnProperty.call(arr,2))  // false
