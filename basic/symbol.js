@@ -27,7 +27,7 @@ let obj2 = {
   [s2]: 233
 }
 
-
+// 可以在对象上绑定Symbol，使它轻易不会被遍历到
 let size = Symbol('size');
 
 class Collection {
@@ -56,3 +56,17 @@ console.log(Collection.sizeOf(c1))
 
 console.log(Object.getOwnPropertyNames(c1))  //['0']
 console.log(Object.getOwnPropertySymbols(c1))  // [ Symbol(size) ]
+
+
+class Person {
+  constructor() {
+    this[Symbol.toStringTag] = 'Person'
+  }
+
+  [Symbol.hasInstance](instance) {
+
+  }
+}
+
+let p = new Person()
+console.log(p + '')
