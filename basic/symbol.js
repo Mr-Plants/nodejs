@@ -63,10 +63,37 @@ class Person {
     this[Symbol.toStringTag] = 'Person'
   }
 
-  [Symbol.hasInstance](instance) {
+  static [Symbol.hasInstance](instance) {
+    return true
+  }
 
+  static [Symbol.match](str) {
+    return str + ' not found'
   }
 }
 
 let p = new Person()
-console.log(p + '')
+console.log(p + '')  // [object Person]
+
+console.log([1, 2, 3] instanceof Person)  // true
+console.log(123 instanceof Person)  // true
+console.log('hello world'.match(Person))  // 'hello world not found'
+
+let obj3 = {
+  [Symbol.toPrimitive](hint) {
+    switch (hint) {
+      case 'number':
+        return 123
+      case 'string':
+        return 'str'
+      case 'default':
+        return 'default';
+    }
+  },
+  [Symbol.toStringTag]: 'Obj3'
+}
+
+console.log(Number(obj3))  // 123
+console.log(String(obj3))   // str
+console.log('' + obj3)  // obj default
+console.log(obj3.toString())  // [object Obj3]
