@@ -10,6 +10,7 @@ console.log(2 in arr)    // false
 console.log('describe' in arr)  //true
 // console.log(arr[2] === arr2[2])
 console.log('=====================')
+console.log(arr.hasOwnProperty(2)) // false
 console.log(Object.prototype.hasOwnProperty.call(arr, '1'))  // true
 console.log(Object.prototype.hasOwnProperty.call(arr, 1)) // true
 console.log(Object.prototype.hasOwnProperty.call(arr, 2))  // false
@@ -18,7 +19,7 @@ console.log(Object.prototype.hasOwnProperty.call(arr, 'describe')) // true
 console.log('============================')
 // 测试对象
 const bruce = {
-  self_prop: 'bruce',
+    self_prop: 'bruce',
 }
 Object.setPrototypeOf(bruce, {'extend_prop': 233})
 let self_symbol = Symbol('self_symbol')
@@ -26,8 +27,8 @@ let self_symbol = Symbol('self_symbol')
 bruce[self_symbol] = "secret";
 // 不可枚举属性
 Object.defineProperty(bruce, 'self_non_enumerable', {
-  enumerable: false,
-  value: 'unKnow'
+    enumerable: false,
+    value: 'unKnow'
 })
 
 console.log('self_prop' in bruce)   // true
