@@ -1,104 +1,104 @@
+const testCase = {
+  name: 'bruce',
+  birth: new Date(1993, 11, 26),
+  reg: /123$/g,
+  remark: {
+    favorite: 'basketball',
+    [Symbol('gender')]: 1,
+    arr: [{name: 'foo', gender: 1}, {name: 'bar'}]
+  }
+}
+
+const iterableObject = Symbol('iteratorObject');
+
 function getType(data) {
   return Object.prototype.toString.call(data)
 }
 
-function isObject(data) {
-  return typeof data === 'object' && data !== null
-}
-
-// todo map set
-function handleObject(type, data) {
-  switch (type) {
-    case '[object RegExp]':
-      return new RegExp(data);
-    case '[object Date]':
-      return new Date(data);
-    case '[object Function]':
-      return new Function(data);
-    default:
-      // 简单类型
-      return data;
-  }
-}
-
-function deepCopy(data) {
-  // 简单数据类型，直接返回结果
-  // if (!isObject(data)) {
-  //   return data;
-  // }
+function handleObject(data) {
   const type = getType(data);
-  if (type !== '[object Object]' && type !== '[object Array]') {
-    return handleObject(type, data)
-  }
-  const root = Array.isArray(data) ? [] : {};
-
-  const stack = [
-    {
-      parent: root,
-      key: undefined,
-      value: data,
+  if (type === '[object Object]' || type === '[object Array]') {
+    return iterableObject;
+  } else {
+    if ((typeof data === 'object' || typeof data === 'function') && data !== null) {
+      // function set map regexp date....
+      return new data.constructor(data);
+    } else {
+      // 基础数据类型
+      return data;
     }
-  ];
+  }
+}
+
+// 兼容数组、symbol、date、正则等
+function deepCopy(data) {
+  const handledData = handleObject(data);
+  if (handledData !== iterableObject) return handledData;
+  // 走到这里最外层只剩数组和对象
+  const target = Array.isArray(data) ? [] : {};
+  const stack = [{
+    data,
+    parent: target
+  }];
+  // 使用hash存储数据要搞清楚存取key是什么，存取value是什么。存取的key必须一致，比如这里存取的key都使用源对象，存取的value都是目标对象
+  const hash = new WeakMap();
+  hash.set(data, target);
 
   while (stack.length) {
-    // todo 广度优先和深度优先？
-    // 弹出栈顶元素
+    // 取出栈顶元素
     const node = stack.pop();
-    const {parent, key, value} = node;
+    const {data, parent} = node;
 
-    // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
-    let res = parent;
-    if (key !== undefined) {
-      res = parent[key] = Array.isArray(value) ? [] : {};
-    }
-
-    for (let key in value) {
-      if (value.hasOwnProperty(key)) {
-        const type = getType(value[key]);
-        if (type === '[object Object]' || type === '[object Array]') {
-          // 纯对象和数组入栈
-          stack.push({
-            parent: res,
-            key,
-            value: value[key],
-          });
+    Reflect.ownKeys(data).forEach(key => {
+      const value = data[key];
+      const handledData = handleObject(value);
+      if (handledData === iterableObject) {
+        // 如果已经保存这个对象，就直接返回，避免循环引用进入死循环
+        if (hash.has(value)) {
+          parent[key] = hash.get(value);
         } else {
-          // 其他类型
-          res[key] = handleObject(type, value[key])
+          // 为要拷贝的数据申请一块内存，并把这个内存地址绑定为下一次要迭代的parent
+          parent[key] = Array.isArray(value) ? [] : {};
+          // 保存这个目标对象，避免对这个数据有多个引用，内存地址却不一致
+          hash.set(value, parent[key]);
+          // 把对象入栈，继续下一轮循环
+          stack.push({
+            data: value,
+            parent: parent[key]
+          })
         }
+
+      } else {
+        parent[key] = handledData;
       }
-    }
+    })
   }
-
-  return root;
+  return target;
 }
 
+let t2 = {name: 2}
+t2.a2 = t2;  // 测试循环引用
+// console.log(JSON.stringify(test2))   // 会报错，循环引用
+// console.log(test2 === test2.a2)   // true
+// let t3 = deepCopy(t2)
+// console.log(t3)
+// console.log(t3.a2===t3)
 
-// ==========test case============
-let obj = {name: 233, gender: 1}
-
-const test = {
-  name: "bruce",
-  a1: undefined,
-  a2: null,
-  // a3: 123,
-  // a4: '',
-  // a5: () => {
-  // },
-  // a6: obj,
-  // a7: obj,
-  // birth: new Date(1992, 0, 3),
-  // a8: /123$./g,
-  // [Symbol('a9')]: 2,
-  book: {title: "You Don't Know JS", price: "45"},
-  arr: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}]
-}
-// test.a4 = test;
-const copy = deepCopy([1, 2, 3])
-// const copy2 = deepCopy(/123.$/g)
+// testCase.a1 = t2;
+// testCase.a2 = t2;
+let test = deepCopy(testCase);
+console.log(test)
+// console.log(test.a1 === test.a2)
 // console.log(test)
-console.log(copy)
-// console.log(test.a6 === test.a7)
-//
-// console.log(copy.a6 === copy.a7)
-// console.log(copy.a4 === copy)
+// console.log(JSON.stringify(test))
+
+let t4 = {
+  mark: {
+    arr: [
+      {name: 1},
+      {name: 2}
+    ]
+  }
+}
+console.log(t4)
+console.log(deepCopy(t4))

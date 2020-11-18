@@ -2,38 +2,45 @@ function getType(data) {
   return Object.prototype.toString.call(data)
 }
 
-function isObject(data) {
-  // return (typeof data === 'object' || typeof data === 'function') && data !== null
-  return typeof data === 'object' && data !== null
+const iterableObject = Symbol('iteratorObject');
+
+function handleObject(data) {
+  const type = getType(data);
+  if (type === '[object Object]' || type === '[object Array]') {
+    return iterableObject;
+  } else {
+    if ((typeof data === 'object' || typeof data === 'function') && data !== null) {
+      // function set map regexp date....
+      return new data.constructor(data);
+    } else {
+      // 基础数据类型
+      return data;
+    }
+  }
 }
 
 function deepCopy(data, hash = new WeakMap()) {
-  // 简单数据类型，直接返回结果
-  if (!isObject(data)) {
-    return data;
+  const handledData = handleObject(data);
+  if (handledData !== iterableObject) {
+    return handledData;
   }
   // 如果hash中包含就直接返回，避免重复引用无限递归
   if (hash.has(data)) {
     return hash.get(data)
   }
 
-  // 引用数据类型，先区分是否是特殊对象
-  if (getType(data) === '[object RegExp]') return new RegExp(data)
-  if (getType(data) === '[object Date]') return new Date(data)
-  if (getType(data) === '[object Function]') return new Function(data)
-
   // 剩下数组和对象
-  let newData = Array.isArray(data) ? [] : {};
+  const target = Array.isArray(data) ? [] : {};
 
   // 保存对象引用
-  hash.set(data, newData);
+  hash.set(data, target);
 
   // 遍历数据，执行递归
   Reflect.ownKeys(data).forEach(key => {
-    newData[key] = deepCopy(data[key], hash)
+    target[key] = deepCopy(data[key], hash)
   })
 
-  return newData
+  return target
 }
 
 let obj = {name: 233, gender: 1}
