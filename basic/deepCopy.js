@@ -22,7 +22,6 @@ function deepCopy(data, hash = new WeakMap()) {
   if (getType(data) === '[object Date]') return new Date(data)
   if (getType(data) === '[object Function]') return new Function(data)
 
-  // todo set、map
   // 剩下数组和对象
   let newData = Array.isArray(data) ? [] : {};
 
@@ -30,14 +29,6 @@ function deepCopy(data, hash = new WeakMap()) {
   hash.set(data, newData);
 
   // 遍历数据，执行递归
-  // todo 递归爆栈
-  // for (let key in data) {
-  //     // 过滤继承的属性
-  //     if (Object.hasOwnProperty.call(data, key)) {
-  //         newData[key] = deepCopy(data[key], hash)
-  //     }
-  // }
-
   Reflect.ownKeys(data).forEach(key => {
     newData[key] = deepCopy(data[key], hash)
   })

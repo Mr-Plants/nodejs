@@ -66,7 +66,7 @@ const testCase = {
   remark: {
     favorite: 'basketball',
     [Symbol('gender')]: 1,
-    arr: [{name: 'foo'}, {name: 'bar'}]
+    arr: [{name: 'foo', gender: 1}, {name: 'bar'}]
   }
 }
 
@@ -75,26 +75,19 @@ function getType(data) {
 }
 
 function handleObject(data) {
-  if(typeof data!=='object'|| data === null){
+  if (typeof data !== 'object' || data === null) {
     return data
-  }else {
+  } else {
     return new data.constructor(data)
   }
 }
 
 // 兼容数组、symbol、date、正则等
 function deepCopy3(data) {
-  // todo 这里函数也直接返回了
-  if (typeof data !== 'object' || data === null) {
-    return data;
+  const type = getType(data);
+  if (type !== '[object Object]' && type !== '[object Array]') {
+    return handleObject(data);
   }
-  // todo map set等等构造函数如何处理？
-  if (getType(data) === '[object RegExp]') return new RegExp(data);
-  if (getType(data) === '[object Date]') return new Date(data);
-  if (getType(data) === '[object Set]') return new Set(data);
-  if (getType(data) === '[object WeakSet]') return new WeakSet(data);
-  if (getType(data) === '[object Map]') return new Map(data);
-  if (getType(data) === '[object WeakMap]') return new WeakMap(data);
 
   // 走到这里只剩数组和对象
   const target = Array.isArray(data) ? [] : {};
@@ -120,13 +113,7 @@ function deepCopy3(data) {
           parent: parent[key]
         })
       } else {
-        if (type === '[object RegExp]') {
-          parent[key] = new RegExp(value);
-        } else if (type === '[object Date]') {
-          parent[key] = new Date(value);
-        } else {
-          parent[key] = value;
-        }
+        parent[key] = handleObject(value);
       }
     })
   }
@@ -135,3 +122,5 @@ function deepCopy3(data) {
 
 let test = deepCopy3(testCase);
 console.log(test)
+// console.log(JSON.stringify(test))
+console.log(deepCopy3(new Set([1, 2, 3, 1])))
