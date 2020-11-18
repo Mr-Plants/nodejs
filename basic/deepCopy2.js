@@ -21,15 +21,8 @@ function deepCopy(data) {
   return target;
 }
 
-const testCase = {
-  name: 'bruce',
-  remark: {
-    favorite: 'basketball',
-    [Symbol('gender')]: 1
-  }
-}
 
-console.log(deepCopy(testCase))
+// console.log(deepCopy(testCase))
 
 // 增加层级控制
 function deepCopy2(data) {
@@ -65,7 +58,15 @@ function deepCopy2(data) {
   return target;
 }
 
-console.log(deepCopy2(testCase))
+// console.log(deepCopy2(testCase))
+const testCase = {
+  name: 'bruce',
+  remark: {
+    favorite: 'basketball',
+    [Symbol('gender')]: 1,
+    arr: [{name: 'foo'}, {name: 'bar'}]
+  }
+}
 
 function getType(data) {
   return Object.prototype.toString.call(data)
@@ -88,15 +89,18 @@ function deepCopy3(data) {
   }];
 
   while (stack.length) {
+    // console.log(stack)
     // 取出栈顶元素
     const node = stack.pop();
     const {data, parent} = node;
 
     Reflect.ownKeys(data).forEach(key => {
       const value = data[key];
-      if (getType(value) === '[object Object]') {
+      // console.log(key, value)
+      if (getType(value) === '[object Object]' || getType(value) === '[object Array]') {
         // 先为要保存的键值申请一块内存，并把这个内存地址绑定为下一次要迭代的parent
-        parent[key] = {};
+        parent[key] = Array.isArray(value) ? [] : {};
+        // console.log(parent[key], key)
         // 如果键值是对象，就把它入栈，否则直接拷贝
         stack.push({
           data: value,
@@ -110,4 +114,5 @@ function deepCopy3(data) {
   return target;
 }
 
-console.log(deepCopy3(testCase))
+let test = deepCopy3(testCase);
+console.log(JSON.stringify(test))
