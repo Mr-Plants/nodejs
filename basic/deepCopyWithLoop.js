@@ -48,7 +48,7 @@ function deepCopy(data) {
     // 取出栈顶元素
     const node = stack.pop();
     const {data, parent} = node;
-
+// todo 如果只想要自身的可枚举属性怎么搞？
     Reflect.ownKeys(data).forEach(key => {
       const value = data[key];
       const handledData = handleObject(value);
