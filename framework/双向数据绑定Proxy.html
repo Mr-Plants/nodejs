@@ -9,27 +9,21 @@
     姓名：
     <input type="text" id="input" oninput="inputAction(this.value)">
 </label>
-<div id="value"></div>
+<div id="inputValue"></div>
 <script>
-  const input = document.getElementById('input')
-  const value = document.getElementById('value')
-  let data = {}
+  let data = {
+    name: ''
+  }
 
-  const a=Object.defineProperty(data, 'name', {
-    set(v) {
-      value.innerText = v;
-    },
-    get() {
-      console.log('get')
-      return data.name
+  let reactiveData = new Proxy(data, {
+    get(target, key, receiver) {
+      return Reflect.get(target, key, receiver)
     }
   })
-
 
   function inputAction(v) {
     data.name = v;
   }
-
 
 
 </script>
