@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<label for="input">
+  姓名：
+  <input type="text" id="input" oninput="inputAction(event)">
+</label>
+<div id="inputValue"></div>
+<script>
+  let data = {
+    name: ''
+  }
+
+  for (let key in data) {
+    Object.defineProperty(data, key, {
+      set(v) {
+        document.querySelector('#inputValue').innerHTML = v;
+      },
+      get() {
+        return data[key]
+      }
+    })
+  }
+
+  function inputAction(e) {
+    data.name = e.target.value;
+  }
+
+
+</script>
+</body>
+</html>
