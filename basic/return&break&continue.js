@@ -54,7 +54,7 @@ function continueInLoop2() {
 // continueInLoop2()
 
 
-const foo = 999;
+const foo = 0;
 switch (foo) {
   case -1:
     console.log('negative 1');
