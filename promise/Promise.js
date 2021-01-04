@@ -4,7 +4,7 @@ const STATUS = {
   REJECTED: 'REJECTED',
 }
 
-function resolvePromise(promise){
+function resolvePromise(promise) {
 
 }
 
@@ -43,13 +43,12 @@ class Promise {
   then(onFulFilled, onRejected) {
     switch (this.status) {
       case STATUS.FULFILLED:
-        const x = onFulFilled(this.value);
-        return new Promise((resolve, reject) => {
-          resolve(x)
-        })
+        onFulFilled(this.value);
+        break;
       case STATUS.REJECTED:
         onRejected(this.reason);
         break;
+      //  如果还在pending，则需要异步处理，使用发布订阅模式
       case STATUS.PENDING:
         this.onResolveCallbacks.push(() => {
           onFulFilled(this.value)
