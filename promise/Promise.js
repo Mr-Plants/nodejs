@@ -4,18 +4,11 @@ const STATUS = {
   REJECTED: 'REJECTED',
 }
 
-/**
- * 干嘛的？
- * @param promise
- */
-function resolvePromise(promise2, x, resolve, reject) {
-
-}
 
 class Promise {
   status = STATUS.PENDING; // default status pending
-  value   // resolve data
-  reason  // reject reason
+  value;   // resolve data
+  reason; // reject reason
   onResolveCallbacks = [];
   onRejectCallbacks = [];
 
@@ -65,8 +58,19 @@ class Promise {
           break;
       }
     })
-    // then函数一定要返回一个promise
+    // then函数一定要返回一个promise，提供链式调用
     return promise2;
+  }
+}
+
+/**
+ * 干嘛的？
+ * @param promise
+ */
+function resolvePromise(promise2, x, resolve, reject) {
+  // todo 自己等待自己，循环运用报错？
+  if (promise2 === x) {
+    return reject(new TypeError('Chaining cycle detected for promise'))
   }
 }
 
