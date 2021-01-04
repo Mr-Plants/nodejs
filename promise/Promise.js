@@ -4,7 +4,11 @@ const STATUS = {
   REJECTED: 'REJECTED',
 }
 
-function resolvePromise(promise) {
+/**
+ * 干嘛的？
+ * @param promise
+ */
+function resolvePromise(promise2, x, resolve, reject) {
 
 }
 
@@ -41,23 +45,28 @@ class Promise {
   }
 
   then(onFulFilled, onRejected) {
-    switch (this.status) {
-      case STATUS.FULFILLED:
-        onFulFilled(this.value);
-        break;
-      case STATUS.REJECTED:
-        onRejected(this.reason);
-        break;
-      //  如果还在pending，则需要异步处理，使用发布订阅模式
-      case STATUS.PENDING:
-        this.onResolveCallbacks.push(() => {
-          onFulFilled(this.value)
-        })
-        this.onRejectCallbacks.push(() => {
-          onRejected(this.reason)
-        })
-        break;
-    }
+    const promise2 = new Promise((resolve, reject) => {
+      switch (this.status) {
+        case STATUS.FULFILLED:
+          let x = onFulFilled(this.value);
+          resolvePromise(promise2, x, resolve, reject);
+          break;
+        case STATUS.REJECTED:
+          onRejected(this.reason);
+          break;
+        //  如果还在pending，则需要异步处理，使用发布订阅模式
+        case STATUS.PENDING:
+          this.onResolveCallbacks.push(() => {
+            onFulFilled(this.value)
+          })
+          this.onRejectCallbacks.push(() => {
+            onRejected(this.reason)
+          })
+          break;
+      }
+    })
+    // then函数一定要返回一个promise
+    return promise2;
   }
 }
 
