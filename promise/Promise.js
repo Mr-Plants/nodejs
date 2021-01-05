@@ -64,13 +64,32 @@ class Promise {
 }
 
 /**
- * 干嘛的？
- * @param promise
+ * 处理二次封装的promise
+ * @param promise2
+ * @param x 第一个then执行回调函数后的返回值，可能是undefined、对象、简单类型数据、函数
+ * @param resolve
+ * @param reject
+ * @returns {*}
  */
 function resolvePromise(promise2, x, resolve, reject) {
   // todo 自己等待自己，循环运用报错？
   if (promise2 === x) {
     return reject(new TypeError('Chaining cycle detected for promise'))
+  }
+  // 如果x是对象或者函数
+  if (x !== null && (typeof x === "object" || typeof x === 'function')) {
+    try {
+      // then可能不存在，取不到抛错
+      let then = x.then;
+      if (typeof then === 'function') {
+        then.call(x, resolve, reject)
+      }
+    } catch (err) {
+      reject(err)
+    }
+  } else {
+    // 简单类型数据直接resolve
+    resolve(x)
   }
 }
 
