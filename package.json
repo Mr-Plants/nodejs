@@ -29,5 +29,6 @@
     "start": "node server.js"
   },
   "author": "weiyb",
-  "license": "ISC"
+  "license": "ISC",
+  "type": "module"
 }
