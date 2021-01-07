@@ -9,16 +9,19 @@ class Promise {
   status = STATUS.PENDING; // default status pending
   value;   // resolve data
   reason; // reject reason
-  onResolveCallbacks = [];
-  onRejectCallbacks = [];
+  onResolvedCallbacks = [];
+  onRejectedCallbacks = [];
 
   constructor(executor) {
     const resolve = value => {
+      if (value instanceof Promise) {
+        return value.then(resolve, reject)
+      }
       // 这里巧妙的利用pending状态不可逆来保证resolve或者reject只能有一个执行
       if (this.status === STATUS.PENDING) {
         this.status = STATUS.FULFILLED;
         this.value = value;
-        this.onResolveCallbacks.forEach(fn => fn());
+        this.onResolvedCallbacks.forEach(fn => fn());
       }
     }
 
@@ -26,7 +29,7 @@ class Promise {
       if (this.status === STATUS.PENDING) {
         this.status = STATUS.REJECTED;
         this.reason = reason;
-        this.onRejectCallbacks.forEach(fn => fn());
+        this.onRejectedCallbacks.forEach(fn => fn());
       }
     }
 
@@ -38,9 +41,9 @@ class Promise {
 
   }
 
-  then(onFulFilled, onRejected) {
+  then(onFulfilled, onRejected) {
     // 如果onFulFilled不是函数，则直接return上一个promise的值，会被resolvePromise包装成resolve（透传）
-    onFulFilled = typeof onFulFilled === 'function' ? onFulFilled : v => v;
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v;
     // 如果onRejected不是函数，则不能直接return，会被resolvePromise包装为resolve，应该抛出错误，包装为reject
     onRejected = typeof onRejected === 'function' ? onRejected : err => {
       throw err
@@ -50,10 +53,10 @@ class Promise {
       if (this.status === STATUS.FULFILLED) {
         setTimeout(() => {
           try {
-            let x = onFulFilled(this.value);
+            let x = onFulfilled(this.value);
             resolvePromise(promise2, x, resolve, reject);
-          } catch (err) {
-            reject(err)
+          } catch (e) {
+            reject(e)
           }
         }, 0)
       }
@@ -63,33 +66,33 @@ class Promise {
           try {
             let x = onRejected(this.reason);
             resolvePromise(promise2, x, resolve, reject);
-          } catch (err) {
-            reject(err)
+          } catch (e) {
+            reject(e)
           }
         }, 0)
       }
 
       // 如果还在pending，一般是异步执行的代码，采用发布订阅模式，储存回调函数
       if (this.status === STATUS.PENDING) {
-        this.onResolveCallbacks.push(() => {
+        this.onResolvedCallbacks.push(() => {
           // 规定fulfilled和rejected函数必须异步执行，浏览器使用自己的微任务实现，我们使用setTimeout实现
           setTimeout(() => {
             try {
-              let x = onFulFilled(this.value);
+              let x = onFulfilled(this.value);
               resolvePromise(promise2, x, resolve, reject);
-            } catch (err) {
+            } catch (e) {
               // 执行fulfilled和rejected函数时如果抛错，直接reject
-              reject(err)
+              reject(e)
             }
           }, 0)
         })
-        this.onRejectCallbacks.push(() => {
+        this.onRejectedCallbacks.push(() => {
           setTimeout(() => {
             try {
               let x = onRejected(this.reason);
               resolvePromise(promise2, x, resolve, reject);
-            } catch (err) {
-              reject(err)
+            } catch (e) {
+              reject(e)
             }
           }, 0)
         })
@@ -101,19 +104,19 @@ class Promise {
     return promise2;
   }
 
-  catch(fn) {
-    return this.then(null, fn);
+  catch(errCallback) {
+    return this.then(null, errCallback);
   }
 
-  static resolve(val) {
+  static resolve(data) {
     return new Promise((resolve, reject) => {
-      resolve(val)
+      resolve(data)
     })
   }
 
-  static reject(err) {
+  static reject(reason) {
     return new Promise((resolve, reject) => {
-      reject(err)
+      reject(reason)
     })
   }
 
@@ -132,7 +135,24 @@ class Promise {
   }
 
   static all(promises) {
+    let arr = [];
+    let i = 0;
 
+    // 将所有resolve的子promise按照入参的顺序保存，如果全部resolve，就resolve总的promise
+    function processResult(index, val, resolve) {
+      arr[index] = val;
+      if (++i === promises.length) {
+        resolve(arr);
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < promises.length; i++) {
+        promises[i].then(res => {
+          processResult(i, res, resolve);
+        }).catch(reject)
+      }
+    })
   }
 }
 
@@ -147,28 +167,28 @@ class Promise {
 function resolvePromise(promise2, x, resolve, reject) {
   // todo 自己等待自己，循环运用报错？
   if (promise2 === x) {
-    return reject(new TypeError('Chaining cycle detected for promise'))
+    return reject(new TypeError('Chaining cycle detected for promise #<Promise>'))
   }
   // 如果x是对象或者函数
-  if (x !== null && (typeof x === "object" || typeof x === 'function')) {
-    let called = false;  // 保证thenable里面的resolve或者reject只执行一次
+  if ((x !== null && typeof x === "object") || typeof x === 'function') {
+    let called;  // 保证thenable里面的resolve或者reject只执行一次
     try {
       // then可能不存在，取不到抛错
       let then = x.then;
       if (typeof then === 'function') {
-        then.call(x, v => {
+        then.call(x, y => {
             if (called) return;
             called = true;
             // 这里还是需要执行resolve，但是还是可能resolve出去简单值、promise等，如果是promise需要递归的去执行promise，
             // 直到最内层的promise状态改变才会一层层的把最外层的promise（当前then返回的promise，即promise2）状态改变
             // 洋葱结构，精妙的地方在于把外层promise的resolve和reject传递给了内层
-            resolvePromise(promise2, v, resolve, reject)
+            resolvePromise(promise2, y, resolve, reject)
           },
-          err => {
+          r => {
             // 将自己的错误穿透给下一个then
             if (called) return;
             called = true;
-            reject(err)
+            reject(r)
           })
       }
     } catch (err) {
@@ -182,3 +202,16 @@ function resolvePromise(promise2, x, resolve, reject) {
     resolve(x)
   }
 }
+
+// 测试代码
+Promise.defer = Promise.deferred = function () {
+  let dfd = {};
+  dfd.promise = new Promise((resolve, reject) => {
+    dfd.resolve = resolve;
+    dfd.reject = reject;
+  })
+  return dfd;
+}
+
+
+module.exports = Promise
