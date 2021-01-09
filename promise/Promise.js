@@ -4,7 +4,6 @@ const STATUS = {
   REJECTED: 'REJECTED',
 }
 
-
 class Promise {
   status = STATUS.PENDING; // default status pending
   value;   // resolve data
@@ -13,6 +12,7 @@ class Promise {
   onRejectedCallbacks = [];
 
   constructor(executor) {
+    // resolve和reject是未来的某一时刻才会执行的函数
     const resolve = value => {
       if (value instanceof Promise) {
         return value.then(resolve, reject)
@@ -49,19 +49,23 @@ class Promise {
       throw err
     };
 
-    const promise2 = new Promise((resolve, reject) => {
-      if (this.status === STATUS.FULFILLED) {
+
+    let promise2 = new Promise((resolve, reject) => {
+      const fulfilledBlock = () => {
+        // 即使在executor中直接resolve的普通值也要在同步代码执行完后再执行onFulfilled
+        // 规定fulfilled和rejected函数必须异步执行，浏览器使用自己的微任务实现，我们使用setTimeout实现
         setTimeout(() => {
           try {
             let x = onFulfilled(this.value);
             resolvePromise(promise2, x, resolve, reject);
           } catch (e) {
-            reject(e)
+            // 执行fulfilled和rejected函数时如果抛错，直接reject
+            reject(e);
           }
         }, 0)
       }
 
-      if (this.status === STATUS.REJECTED) {
+      const rejectedBlock = () => {
         setTimeout(() => {
           try {
             let x = onRejected(this.reason);
@@ -72,32 +76,21 @@ class Promise {
         }, 0)
       }
 
+      if (this.status === STATUS.FULFILLED) {
+        fulfilledBlock();
+      }
+
+      if (this.status === STATUS.REJECTED) {
+        rejectedBlock();
+      }
+
       // 如果还在pending，一般是异步执行的代码，采用发布订阅模式，储存回调函数
       if (this.status === STATUS.PENDING) {
-        this.onResolvedCallbacks.push(() => {
-          // 规定fulfilled和rejected函数必须异步执行，浏览器使用自己的微任务实现，我们使用setTimeout实现
-          setTimeout(() => {
-            try {
-              let x = onFulfilled(this.value);
-              resolvePromise(promise2, x, resolve, reject);
-            } catch (e) {
-              // 执行fulfilled和rejected函数时如果抛错，直接reject
-              reject(e)
-            }
-          }, 0)
-        })
-        this.onRejectedCallbacks.push(() => {
-          setTimeout(() => {
-            try {
-              let x = onRejected(this.reason);
-              resolvePromise(promise2, x, resolve, reject);
-            } catch (e) {
-              reject(e)
-            }
-          }, 0)
-        })
+        this.onFulfilledCallbacks.push(fulfilledBlock);
+        this.onRejectedCallbacks.push(rejectedBlock)
       }
     })
+
     // then函数一定要返回一个promise，提供链式调用，这个promise需要把onFulfilled函数的返回值（x）传递给下一个then。
     // onFulfilled函数可能返回简单类型的数据，那么只需要继续resolve出去即可（透传）
     // onFulfilled函数可能返回对象（thenable）或函数，则需要执行对象的then方法，没有then则直接reject
@@ -129,28 +122,38 @@ class Promise {
   static race(promises) {
     return new Promise((resolve, reject) => {
       for (let i = 0; i < promises.length; i++) {
-        promises[i].then(resolve, reject);
+        let val = promises[i];
+        if (val && typeof val.then === 'function') {
+          val.then(resolve, reject);
+        } else {
+          resolve(val)
+        }
       }
     })
   }
 
   static all(promises) {
-    let arr = [];
-    let i = 0;
-
-    // 将所有resolve的子promise按照入参的顺序保存，如果全部resolve，就resolve总的promise
-    function processResult(index, val, resolve) {
-      arr[index] = val;
-      if (++i === promises.length) {
-        resolve(arr);
-      }
-    }
-
     return new Promise((resolve, reject) => {
+      let arr = [], i = 0;
+
+      // 将所有resolve的子promise按照入参的顺序保存，如果全部resolve，就resolve总的promise
+      const processData = (index, val) => {
+        arr[index] = val;
+        if (++i === promises.length) {
+          resolve(arr);
+        }
+      }
+
       for (let i = 0; i < promises.length; i++) {
-        promises[i].then(res => {
-          processResult(i, res, resolve);
-        }).catch(reject)
+        let val = promises[i];
+        if (val && typeof val.then === 'function') {
+          val.then(data => {
+            processData(i, data);
+          }, reject);
+        } else {
+          processData(i, val);
+        }
+
       }
     })
   }
