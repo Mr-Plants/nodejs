@@ -23,7 +23,7 @@ function trueCurrying(fn, ...args) {
 
   }
 }
-
+// todo curry
 
 // console.log(add(1)(2))
 let add2 = trueCurrying(add)
